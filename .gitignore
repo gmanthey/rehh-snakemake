@@ -1,0 +1,5 @@
+config.yml
+resources/
+results/
+logs/
+.snakemake/

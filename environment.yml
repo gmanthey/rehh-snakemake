@@ -1,0 +1,12 @@
+name: rehh-snakemake
+channels:
+  - bioconda
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python
+  - bioconda::snakemake
+  - bioconda::bcftools
+  - bioconda::snakemake-executor-plugin-slurm
+  - R
+  - vcfR

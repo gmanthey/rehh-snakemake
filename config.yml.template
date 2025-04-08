@@ -1,7 +1,4 @@
 vcf_file: "/path/to/vcf.gz"
-genome: "/path/to/genome.fasta"
 populations_file: "resources/populations.txt"
 chromosome_file: "resources/chromosomes.txt"
-bam_dir: "/path/to/bam_files"
-log_dir: "logs"
-final_bam_extension: ".rmdup"
+min_maf: 0.05

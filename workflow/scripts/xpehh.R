@@ -1,7 +1,9 @@
 library(rehh)
 
-ihh_pop1 <- load(snakemake@input[[1]])
-ihh_pop2 <- load(snakemake@input[[2]])
+load(snakemake@input[[1]])
+ihh_pop1 <- scan
+load(snakemake@input[[2]])
+ihh_pop2 <- scan
 
 xpehh <- ies2xpehh(scan_pop1 = ihh_pop1, 
                    scan_pop2 = ihh_pop2,

@@ -9,4 +9,5 @@ dependencies:
   - bioconda::bcftools
   - bioconda::snakemake-executor-plugin-slurm
   - R
-  - vcfR
+  - r-vcfr
+  - pandas

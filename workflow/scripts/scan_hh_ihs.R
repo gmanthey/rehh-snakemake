@@ -12,4 +12,5 @@ save(scan, file=snakemake@output[[1]])
 
 ihs <- ihh2ihs(scan)
 
-write.csv(ihs, snakemake@output[[2]])
+write.csv(ihs$ihs, snakemake@output[[2]])
+write.csv(ihs$frequency.class, snakemake@output[[3]])

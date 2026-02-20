@@ -2,6 +2,6 @@ executor: slurm
 jobs: 100
 cores: 100
 default-resources: 
-  slurm_partition: mpcs.p 
-  mem_mb: 20000
+  slurm_partition: rosa.p 
+  mem_mb: 50000
   runtime: 2880

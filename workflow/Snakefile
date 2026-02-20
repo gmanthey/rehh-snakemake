@@ -26,7 +26,7 @@ def get_chromosomes():
 def cross_populations():
     populations = list(get_populations().keys())
 
-    pop_files = expand("results/ihs/combined/{population}.csv", population=populations)
+    pop_files = expand("results/ihs/{population}.csv", population=populations)
 
     if len(populations) == 1:
         return pop_files
@@ -35,7 +35,7 @@ def cross_populations():
 
     for i, pop1 in enumerate(populations[:-1]):
         for j, pop2 in enumerate(populations[i+1:]):
-            combined_files.append(f"results/xpehh/combined/{pop1}-{pop2}.csv")
+            combined_files.append(f"results/xpehh/{pop1}-{pop2}.csv")
 
     return pop_files + combined_files
 
@@ -45,38 +45,40 @@ rule all:
 
 rule population_chromosome_vcf:
     input:
-        config["vcf_file"]
+        config["vcf_file"],
+        config["populations_file"]
     output:
         "results/vcf/{population}/by-chromosome/{chromosome}.vcf.gz"
     log:
         "log/vcf/{population}/{chromosome}.log"
     run:
         individuals = ','.join(get_populations()[wildcards.population])
-        shell(f"bcftools view -s {individuals} -r {wildcards.chromosome} -Oz -o {output} {input} > {log} 2>&1")
+        shell(f"bcftools view -s {individuals} -r {wildcards.chromosome} -Oz -o {output} {input[0]} > {log} 2>&1")
 
-rule scan_hh_ihs:
+rule scan_hh:
     input:
         "results/vcf/{population}/by-chromosome/{chromosome}.vcf.gz"
     output:
         "results/ihh/{population}/by-chromosome/{chromosome}.Rdata",
-        "results/ihs/{population}/by-chromosome/{chromosome}.csv",
-        "results/ihs/{population}/by-chromosome/{chromosome}.f-class.csv"
     script:
-        "scripts/scan_hh_ihs.R"
+        "scripts/scan_hh.R"
+
+rule ihs:
+    input:
+        expand("results/ihh/{{population}}/by-chromosome/{chromosome}.Rdata", chromosome=get_chromosomes())
+    output:
+        "results/ihs/{population}.csv",
+        "results/ihs/{population}.f_class.csv"
+    script:
+        "scripts/ihs.R"
 
 rule xpehh:
     input:
-        "results/ihh/{pop1}/by-chromosome/{chromosome}.Rdata",
-        "results/ihh/{pop2}/by-chromosome/{chromosome}.Rdata"
+        expand("results/ihh/{{pop1}}/by-chromosome/{chromosome}.Rdata", chromosome=get_chromosomes()),
+        expand("results/ihh/{{pop2}}/by-chromosome/{chromosome}.Rdata", chromosome=get_chromosomes())
     output:
-        "results/xpehh/{pop1}-{pop2}/by-chromosome/{chromosome}.csv"
+        "results/xpehh/{pop1}-{pop2}.csv",
+        "results/xpehh/{pop1}-{pop2}.candidates.csv",
+        "results/xpehh/{pop1}-{pop2}.normalized.csv",
     script:
         "scripts/xpehh.R"
-
-rule combine_chromosomes:
-    input:
-        expand("results/{{type}}/{{population}}/by-chromosome/{chromosome}.csv", chromosome = get_chromosomes())
-    output:
-        "results/{type}/combined/{population}.csv"
-    script:
-        "scripts/combine_files.py"
